@@ -140,11 +140,9 @@ nextBtn.onclick = () => {
 
         if (selectedOption4.length > 0) {  
             const correctSelections = selectedOption4.filter(ans => questions[questionIndex].answer.includes(ans.textContent));
-            if (correctSelections.length === 2) {
-                Major += 2;
-            } else if (correctSelections.length === 1) {
+            if (correctSelections.length === 2 || correctSelections.length === 1) {
                 Major++;
-            }
+            } 
         }
         selectedOption4 = []; 
         selectedAnswer = null;
