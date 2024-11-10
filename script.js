@@ -20,6 +20,9 @@ let Major = 0;
 let Minor = 0;
 let year
 let answeredQuestions = new Set();
+let selectedAnswers = [];
+let selectedOption4 = []; 
+
 
 //function แสดงคำถาม loop คำถามแต่ละข้อจากไฟล์  questions.js
 function showQuestions(index) {
@@ -34,8 +37,30 @@ function showQuestions(index) {
         optionTag.innerHTML = `<span>${optionText}</span>`;
         optionList.appendChild(optionTag);
 
-        optionTag.onclick = () => selectAnswer(optionTag, index);
+        if (questions[index].numb === 4) {
+            optionTag.onclick = () => selectAnswerForQ4(optionTag, index)
+        } else {
+
+            optionTag.onclick = () => selectAnswer(optionTag, index);
+        }
     });
+}
+
+function selectAnswerForQ4(option, index) {
+    if (selectedOption4.includes(option)) {
+        // หากเลือกตัวเลือกนี้แล้ว ให้เอาออกจาก selectedOption4 และเอากรอบสีออก
+        selectedOption4 = selectedOption4.filter(ans => ans !== option);
+        option.style.border = "";  // เอากรอบสีออก
+    } else if (selectedOption4.length < 2) {
+        selectedOption4.push(option);
+        option.style.border = "2px solid #ffd700";  // กำหนดกรอบสี
+    } 
+    
+    if (selectedOption4.length > 0) {
+        nextBtn.classList.add('active');
+    } else {
+        nextBtn.classList.remove('active');
+    }
 }
 
 // ฟังก์ชันเช็คคำตอบที่เลือก
@@ -52,26 +77,6 @@ function selectAnswer(option, index) {
 
     if (Article === 0) {
         year = option.textContent;
-    } else if (index === 2) {
-        checkA = userAnswers[index]
-        if (checkA === "A. เป็นผื่นลักษณะนี้ครั้งแรก") {
-            questions.splice(3, 0, {
-                numb: 2.1,
-                type: "Major",
-                question: "มีผื่นลักษณะนี้มานานหรือยัง",
-                options: [
-                    "A. 1-2 สัปดาห์",
-                    "B. 3-4 สัปดาห์",
-                    "C. 1-3 เดือน",
-                    "D. 3-6 เดือน"
-                ],
-                answer: [
-                    "B. 3-4 สัปดาห์",
-                    "C. 1-3 เดือน",
-                    "D. 3-6 เดือน"
-                ]
-            });
-        }
     } else if (Article === 3) {
         if (year.includes("A. อายุน้อยกว่า 2 ปี")) {
             questions[index].answer = ["A. ใบหน้า/แก้ม", "D. ด้านนอกของแขน และ ขา"];
@@ -98,10 +103,29 @@ function showResultBox() {
 
 //function ข้อต่อไป + เพิ่มคะแนน
 nextBtn.onclick = () => {
-    if (selectedAnswer) {
+    if (selectedAnswer || selectedOption4.length > 0) {
         const questionIndex = questionCount;
         const questionn = questions[questionIndex];
         const corrects = questionn.answer
+
+        if (userAnswers[questionIndex] === "A. เป็นผื่นลักษณะนี้ครั้งแรก") {
+            questions.splice(3, 0, {
+                numb: 2.1,
+                type: "Major",
+                question: "มีผื่นลักษณะนี้มานานหรือยัง",
+                options: [
+                    "A. 1-2 สัปดาห์",
+                    "B. 3-4 สัปดาห์",
+                    "C. 1-3 เดือน",
+                    "D. 3-6 เดือน"
+                ],
+                answer: [
+                    "B. 3-4 สัปดาห์",
+                    "C. 1-3 เดือน",
+                    "D. 3-6 เดือน"
+                ]
+            });
+        }
 
         if (corrects.includes(userAnswers[questionIndex])) {
             if (!answeredQuestions.has(questionIndex)) {
@@ -114,6 +138,15 @@ nextBtn.onclick = () => {
             }
         }
 
+        if (selectedOption4.length > 0) {  
+            const correctSelections = selectedOption4.filter(ans => questions[questionIndex].answer.includes(ans.textContent));
+            if (correctSelections.length === 2) {
+                Major += 2;
+            } else if (correctSelections.length === 1) {
+                Major++;
+            }
+        }
+        selectedOption4 = []; 
         selectedAnswer = null;
 
         if (questionCount < questions.length - 1) {
@@ -146,7 +179,7 @@ tryAgainBtn.onclick = () => {
     selectedAnswer = null;
     showQuestions(questionCount);
     questionCounter(questionNumb);
-    headerScore();
+    
 }
 
 //function กลับมาหน้าแรกหลังทำ Quiz
@@ -161,7 +194,7 @@ goHomeBtn.onclick = () => {
     selectedAnswer = null;
     showQuestions(questionCount);
     questionCounter(questionNumb);
-    headerScore();
+    
 }
 
 //function ปุ่ม เริ่มทำQuiz
@@ -185,5 +218,5 @@ continueBtn.onclick = () => {
 
     showQuestions(0);
     questionCounter(1);
-    headerScore();
+    
 }
