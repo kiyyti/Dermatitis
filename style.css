@@ -10,7 +10,7 @@
 body {
     color: #fff;
     background: #09001d;
-    overflow: hidden;
+    overflow:hidden;
 }
 
 .header {
@@ -448,6 +448,10 @@ body {
 
 /* Responsive for tablets */
 @media (max-width: 768px) {
+    body , html{
+        overflow: hidden;
+    }
+    
     .header {
         padding: 20px 5%;
     }
@@ -525,6 +529,8 @@ body {
 
 /* Responsive for mobile */
 @media (max-width: 480px) {
+    
+    
     .header {
         padding: 15px 5%;
         width: 100vw; 
