@@ -493,6 +493,11 @@ body {
         padding: 15px;
     }
 
+    .quiz-section.active {
+        padding-left: 1vh;
+        padding-right: 1.7vh;
+    }
+
     .quiz-box h1, .result-box h2 {
         font-size: 28px;
     }
@@ -561,7 +566,7 @@ body {
     }
 
     .popup-info {
-        width: 100%;
+        width: 95%;
         padding: 10px;
     }
 
